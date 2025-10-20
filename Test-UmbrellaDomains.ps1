@@ -222,16 +222,13 @@ if (-not $results) {
     return
 }
 
-$maxUrlLength = ($results |
-    ForEach-Object { $_.Url.Length } |
-    Measure-Object -Maximum
-).Maximum
+$maxUrlLength = ($results | Measure-Object -Property Url -Maximum).Maximum
+if (-not $maxUrlLength) { $maxUrlLength = 3 }
 
 $headerUrl = 'URL'
 $headerStatus = 'Status'
-$maxUrlLength = [Math]::Max($maxUrlLength, $headerUrl.Length)
 $formatString = "{0,-$maxUrlLength}  {1}"
-$dividerLength = $maxUrlLength
+$dividerLength = [Math]::Max($headerUrl.Length, $maxUrlLength)
 $divider = ('-' * $dividerLength) + '  ' + ('-' * $headerStatus.Length)
 
 Write-Host ($formatString -f $headerUrl, $headerStatus) -ForegroundColor White
